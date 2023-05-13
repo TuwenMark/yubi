@@ -1,4 +1,4 @@
-package com.yupi.springbootinit.utils;
+package com.winter.yubi.utils;
 
 import java.net.InetAddress;
 import javax.servlet.http.HttpServletRequest;

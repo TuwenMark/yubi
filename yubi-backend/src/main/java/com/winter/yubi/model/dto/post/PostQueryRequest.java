@@ -1,6 +1,6 @@
-package com.yupi.springbootinit.model.dto.post;
+package com.winter.yubi.model.dto.post;
 
-import com.yupi.springbootinit.common.PageRequest;
+import com.winter.yubi.common.PageRequest;
 import java.io.Serializable;
 import java.util.List;
 import lombok.Data;

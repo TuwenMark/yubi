@@ -1,41 +1,27 @@
-package com.yupi.springbootinit.controller;
+package com.winter.yubi.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.yupi.springbootinit.annotation.AuthCheck;
-import com.yupi.springbootinit.common.BaseResponse;
-import com.yupi.springbootinit.common.DeleteRequest;
-import com.yupi.springbootinit.common.ErrorCode;
-import com.yupi.springbootinit.common.ResultUtils;
-import com.yupi.springbootinit.config.WxOpenConfig;
-import com.yupi.springbootinit.constant.UserConstant;
-import com.yupi.springbootinit.exception.BusinessException;
-import com.yupi.springbootinit.exception.ThrowUtils;
-import com.yupi.springbootinit.model.dto.user.UserAddRequest;
-import com.yupi.springbootinit.model.dto.user.UserLoginRequest;
-import com.yupi.springbootinit.model.dto.user.UserQueryRequest;
-import com.yupi.springbootinit.model.dto.user.UserRegisterRequest;
-import com.yupi.springbootinit.model.dto.user.UserUpdateMyRequest;
-import com.yupi.springbootinit.model.dto.user.UserUpdateRequest;
-import com.yupi.springbootinit.model.entity.User;
-import com.yupi.springbootinit.model.vo.LoginUserVO;
-import com.yupi.springbootinit.model.vo.UserVO;
-import com.yupi.springbootinit.service.UserService;
-import java.util.List;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.winter.yubi.annotation.AuthCheck;
+import com.winter.yubi.common.BaseResponse;
+import com.winter.yubi.common.DeleteRequest;
+import com.winter.yubi.common.ErrorCode;
+import com.winter.yubi.common.ResultUtils;
+import com.winter.yubi.constant.UserConstant;
+import com.winter.yubi.exception.BusinessException;
+import com.winter.yubi.exception.ThrowUtils;
+import com.winter.yubi.model.dto.user.*;
+import com.winter.yubi.model.entity.User;
+import com.winter.yubi.model.vo.LoginUserVO;
+import com.winter.yubi.model.vo.UserVO;
+import com.winter.yubi.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
-import me.chanjar.weixin.common.bean.oauth2.WxOAuth2AccessToken;
-import me.chanjar.weixin.mp.api.WxMpService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 用户接口
@@ -50,9 +36,6 @@ public class UserController {
 
     @Resource
     private UserService userService;
-
-    @Resource
-    private WxOpenConfig wxOpenConfig;
 
     // region 登录相关
 
@@ -96,29 +79,6 @@ public class UserController {
         }
         LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, request);
         return ResultUtils.success(loginUserVO);
-    }
-
-    /**
-     * 用户登录（微信开放平台）
-     */
-    @GetMapping("/login/wx_open")
-    public BaseResponse<LoginUserVO> userLoginByWxOpen(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam("code") String code) {
-        WxOAuth2AccessToken accessToken;
-        try {
-            WxMpService wxService = wxOpenConfig.getWxMpService();
-            accessToken = wxService.getOAuth2Service().getAccessToken(code);
-            WxOAuth2UserInfo userInfo = wxService.getOAuth2Service().getUserInfo(accessToken, code);
-            String unionId = userInfo.getUnionId();
-            String mpOpenId = userInfo.getOpenid();
-            if (StringUtils.isAnyBlank(unionId, mpOpenId)) {
-                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "登录失败，系统错误");
-            }
-            return ResultUtils.success(userService.userLoginByMpOpen(userInfo, request));
-        } catch (Exception e) {
-            log.error("userLoginByWxOpen error", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "登录失败，系统错误");
-        }
     }
 
     /**

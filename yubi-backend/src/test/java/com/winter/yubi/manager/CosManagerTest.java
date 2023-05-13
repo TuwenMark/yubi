@@ -1,4 +1,4 @@
-package com.yupi.springbootinit.manager;
+package com.winter.yubi.manager;
 
 import javax.annotation.Resource;
 import org.junit.jupiter.api.Test;

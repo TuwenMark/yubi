@@ -1,16 +1,12 @@
 package com.winter.yubi.model.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.winter.yubi.model.entity.Post;
+import com.winter.yubi.model.entity.Chart;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 帖子视图
@@ -71,36 +67,30 @@ public class ChartVO implements Serializable {
     /**
      * 包装类转对象
      *
-     * @param postVO
+     * @param chartVO
      * @return
      */
-    public static Post voToObj(ChartVO postVO) {
-        if (postVO == null) {
+    public static Chart voToObj(ChartVO chartVO) {
+        if (chartVO == null) {
             return null;
         }
-        Post post = new Post();
-        BeanUtils.copyProperties(postVO, post);
-        List<String> tagList = postVO.getTagList();
-        if (tagList != null) {
-            post.setTags(GSON.toJson(tagList));
-        }
-        return post;
+        Chart chart = new Chart();
+        BeanUtils.copyProperties(chartVO, chart);
+        return chart;
     }
 
     /**
      * 对象转包装类
      *
-     * @param post
+     * @param chart
      * @return
      */
-    public static ChartVO objToVo(Post post) {
-        if (post == null) {
+    public static ChartVO objToVo(Chart chart) {
+        if (chart == null) {
             return null;
         }
-        ChartVO postVO = new ChartVO();
-        BeanUtils.copyProperties(post, postVO);
-        postVO.setTagList(GSON.fromJson(post.getTags(), new TypeToken<List<String>>() {
-        }.getType()));
-        return postVO;
+        ChartVO chartVO = new ChartVO();
+        BeanUtils.copyProperties(chart, chartVO);
+        return chartVO;
     }
 }

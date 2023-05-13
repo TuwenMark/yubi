@@ -1,20 +1,16 @@
-package com.yupi.springbootinit.controller;
+package com.winter.yubi.controller;
 
 import cn.hutool.core.io.FileUtil;
-import com.yupi.springbootinit.common.BaseResponse;
-import com.yupi.springbootinit.common.ErrorCode;
-import com.yupi.springbootinit.common.ResultUtils;
-import com.yupi.springbootinit.constant.FileConstant;
-import com.yupi.springbootinit.exception.BusinessException;
-import com.yupi.springbootinit.manager.CosManager;
-import com.yupi.springbootinit.model.dto.file.UploadFileRequest;
-import com.yupi.springbootinit.model.entity.User;
-import com.yupi.springbootinit.model.enums.FileUploadBizEnum;
-import com.yupi.springbootinit.service.UserService;
-import java.io.File;
-import java.util.Arrays;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import com.winter.yubi.common.BaseResponse;
+import com.winter.yubi.common.ErrorCode;
+import com.winter.yubi.common.ResultUtils;
+import com.winter.yubi.constant.FileConstant;
+import com.winter.yubi.exception.BusinessException;
+import com.winter.yubi.manager.CosManager;
+import com.winter.yubi.model.dto.file.UploadFileRequest;
+import com.winter.yubi.model.entity.User;
+import com.winter.yubi.model.enums.FileUploadBizEnum;
+import com.winter.yubi.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.util.Arrays;
 
 /**
  * 文件接口
@@ -50,7 +51,7 @@ public class FileController {
      */
     @PostMapping("/upload")
     public BaseResponse<String> uploadFile(@RequestPart("file") MultipartFile multipartFile,
-            UploadFileRequest uploadFileRequest, HttpServletRequest request) {
+										   UploadFileRequest uploadFileRequest, HttpServletRequest request) {
         String biz = uploadFileRequest.getBiz();
         FileUploadBizEnum fileUploadBizEnum = FileUploadBizEnum.getEnumByValue(biz);
         if (fileUploadBizEnum == null) {

@@ -1,6 +1,6 @@
-package com.yupi.springbootinit.model.dto.user;
+package com.winter.yubi.model.dto.user;
 
-import com.yupi.springbootinit.common.PageRequest;
+import com.winter.yubi.common.PageRequest;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

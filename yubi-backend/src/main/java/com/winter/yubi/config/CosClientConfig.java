@@ -1,4 +1,4 @@
-package com.yupi.springbootinit.config;
+package com.winter.yubi.config;
 
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;

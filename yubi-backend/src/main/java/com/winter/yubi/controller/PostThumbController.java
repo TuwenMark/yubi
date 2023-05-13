@@ -1,20 +1,21 @@
-package com.yupi.springbootinit.controller;
+package com.winter.yubi.controller;
 
-import com.yupi.springbootinit.common.BaseResponse;
-import com.yupi.springbootinit.common.ErrorCode;
-import com.yupi.springbootinit.common.ResultUtils;
-import com.yupi.springbootinit.exception.BusinessException;
-import com.yupi.springbootinit.model.dto.postthumb.PostThumbAddRequest;
-import com.yupi.springbootinit.model.entity.User;
-import com.yupi.springbootinit.service.PostThumbService;
-import com.yupi.springbootinit.service.UserService;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import com.winter.yubi.common.BaseResponse;
+import com.winter.yubi.common.ErrorCode;
+import com.winter.yubi.common.ResultUtils;
+import com.winter.yubi.exception.BusinessException;
+import com.winter.yubi.model.dto.postthumb.PostThumbAddRequest;
+import com.winter.yubi.model.entity.User;
+import com.winter.yubi.service.PostThumbService;
+import com.winter.yubi.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 帖子点赞接口
@@ -42,7 +43,7 @@ public class PostThumbController {
      */
     @PostMapping("/")
     public BaseResponse<Integer> doThumb(@RequestBody PostThumbAddRequest postThumbAddRequest,
-            HttpServletRequest request) {
+										 HttpServletRequest request) {
         if (postThumbAddRequest == null || postThumbAddRequest.getPostId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }

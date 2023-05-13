@@ -1,6 +1,6 @@
-package com.yupi.springbootinit.common;
+package com.winter.yubi.common;
 
-import com.yupi.springbootinit.constant.CommonConstant;
+import com.winter.yubi.constant.CommonConstant;
 import lombok.Data;
 
 /**

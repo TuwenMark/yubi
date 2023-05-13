@@ -1,22 +1,22 @@
-package com.winter.yubi.model.dto.chart;
+package com.winter.yubi.model.entity;
 
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 更新请求
- *
- * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
- * @from <a href="https://yupi.icu">编程导航知识星球</a>
+ * 图表信息表
+ * @TableName chart
  */
+@TableName(value ="chart")
 @Data
-public class ChartUpdateRequest implements Serializable {
-
+public class Chart implements Serializable {
     /**
      * id
      */
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -59,5 +59,13 @@ public class ChartUpdateRequest implements Serializable {
      */
     private Date updateTime;
 
+    /**
+     * 是否删除
+     */
+    @TableLogic
+    private Integer isDelete;
+
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
 }

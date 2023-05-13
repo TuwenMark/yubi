@@ -1,35 +1,27 @@
-package com.yupi.springbootinit.service.impl;
+package com.winter.yubi.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
-import com.yupi.springbootinit.common.ErrorCode;
-import com.yupi.springbootinit.constant.CommonConstant;
-import com.yupi.springbootinit.exception.BusinessException;
-import com.yupi.springbootinit.exception.ThrowUtils;
-import com.yupi.springbootinit.mapper.PostFavourMapper;
-import com.yupi.springbootinit.mapper.PostMapper;
-import com.yupi.springbootinit.mapper.PostThumbMapper;
-import com.yupi.springbootinit.model.dto.post.PostEsDTO;
-import com.yupi.springbootinit.model.dto.post.PostQueryRequest;
-import com.yupi.springbootinit.model.entity.Post;
-import com.yupi.springbootinit.model.entity.PostFavour;
-import com.yupi.springbootinit.model.entity.PostThumb;
-import com.yupi.springbootinit.model.entity.User;
-import com.yupi.springbootinit.model.vo.PostVO;
-import com.yupi.springbootinit.model.vo.UserVO;
-import com.yupi.springbootinit.service.PostService;
-import com.yupi.springbootinit.service.UserService;
-import com.yupi.springbootinit.utils.SqlUtils;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import com.winter.yubi.common.ErrorCode;
+import com.winter.yubi.constant.CommonConstant;
+import com.winter.yubi.exception.BusinessException;
+import com.winter.yubi.exception.ThrowUtils;
+import com.winter.yubi.mapper.PostFavourMapper;
+import com.winter.yubi.mapper.PostMapper;
+import com.winter.yubi.mapper.PostThumbMapper;
+import com.winter.yubi.model.dto.post.PostEsDTO;
+import com.winter.yubi.model.dto.post.PostQueryRequest;
+import com.winter.yubi.model.entity.Post;
+import com.winter.yubi.model.entity.PostFavour;
+import com.winter.yubi.model.entity.PostThumb;
+import com.winter.yubi.model.entity.User;
+import com.winter.yubi.model.vo.PostVO;
+import com.winter.yubi.model.vo.UserVO;
+import com.winter.yubi.service.PostService;
+import com.winter.yubi.service.UserService;
+import com.winter.yubi.utils.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -46,6 +38,11 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 帖子服务实现

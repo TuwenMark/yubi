@@ -1,8 +1,8 @@
-package com.winter.yubi.model.dto.post;
+package com.winter.yubi.model.dto.chart;
+
+import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
-import lombok.Data;
 
 /**
  * 编辑请求
@@ -11,7 +11,7 @@ import lombok.Data;
  * @from <a href="https://yupi.icu">编程导航知识星球</a>
  */
 @Data
-public class PostEditRequest implements Serializable {
+public class ChartEditRequest implements Serializable {
 
     /**
      * id
@@ -19,19 +19,19 @@ public class PostEditRequest implements Serializable {
     private Long id;
 
     /**
-     * 标题
+     * 分析目标
      */
-    private String title;
+    private String goal;
 
     /**
-     * 内容
+     * 图表数据
      */
-    private String content;
+    private String chartData;
 
     /**
-     * 标签列表
+     * 图表类型
      */
-    private List<String> tags;
+    private String chartType;
 
     private static final long serialVersionUID = 1L;
 }

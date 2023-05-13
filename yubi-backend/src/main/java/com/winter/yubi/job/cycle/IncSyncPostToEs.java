@@ -1,9 +1,10 @@
-package com.yupi.springbootinit.job.cycle;
+package com.winter.yubi.job.cycle;
 
-import com.yupi.springbootinit.esdao.PostEsDao;
-import com.yupi.springbootinit.mapper.PostMapper;
-import com.yupi.springbootinit.model.dto.post.PostEsDTO;
-import com.yupi.springbootinit.model.entity.Post;
+import com.winter.yubi.esdao.PostEsDao;
+import com.winter.yubi.mapper.PostMapper;
+import com.winter.yubi.model.dto.post.PostEsDTO;
+import com.winter.yubi.model.entity.Post;
+
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;

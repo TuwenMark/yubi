@@ -1,27 +1,28 @@
-package com.yupi.springbootinit.controller;
+package com.winter.yubi.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.yupi.springbootinit.common.BaseResponse;
-import com.yupi.springbootinit.common.ErrorCode;
-import com.yupi.springbootinit.common.ResultUtils;
-import com.yupi.springbootinit.exception.BusinessException;
-import com.yupi.springbootinit.exception.ThrowUtils;
-import com.yupi.springbootinit.model.dto.post.PostQueryRequest;
-import com.yupi.springbootinit.model.dto.postfavour.PostFavourAddRequest;
-import com.yupi.springbootinit.model.dto.postfavour.PostFavourQueryRequest;
-import com.yupi.springbootinit.model.entity.Post;
-import com.yupi.springbootinit.model.entity.User;
-import com.yupi.springbootinit.model.vo.PostVO;
-import com.yupi.springbootinit.service.PostFavourService;
-import com.yupi.springbootinit.service.PostService;
-import com.yupi.springbootinit.service.UserService;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import com.winter.yubi.common.BaseResponse;
+import com.winter.yubi.common.ErrorCode;
+import com.winter.yubi.common.ResultUtils;
+import com.winter.yubi.exception.BusinessException;
+import com.winter.yubi.exception.ThrowUtils;
+import com.winter.yubi.model.dto.post.PostQueryRequest;
+import com.winter.yubi.model.dto.postfavour.PostFavourAddRequest;
+import com.winter.yubi.model.dto.postfavour.PostFavourQueryRequest;
+import com.winter.yubi.model.entity.Post;
+import com.winter.yubi.model.entity.User;
+import com.winter.yubi.model.vo.PostVO;
+import com.winter.yubi.service.PostFavourService;
+import com.winter.yubi.service.PostService;
+import com.winter.yubi.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 帖子收藏接口
@@ -52,7 +53,7 @@ public class PostFavourController {
      */
     @PostMapping("/")
     public BaseResponse<Integer> doPostFavour(@RequestBody PostFavourAddRequest postFavourAddRequest,
-            HttpServletRequest request) {
+											  HttpServletRequest request) {
         if (postFavourAddRequest == null || postFavourAddRequest.getPostId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -71,7 +72,7 @@ public class PostFavourController {
      */
     @PostMapping("/my/list/page")
     public BaseResponse<Page<PostVO>> listMyFavourPostByPage(@RequestBody PostQueryRequest postQueryRequest,
-            HttpServletRequest request) {
+															 HttpServletRequest request) {
         if (postQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }

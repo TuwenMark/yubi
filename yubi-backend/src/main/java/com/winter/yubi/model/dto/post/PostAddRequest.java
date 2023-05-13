@@ -1,4 +1,4 @@
-package com.yupi.springbootinit.model.dto.post;
+package com.winter.yubi.model.dto.post;
 
 import java.io.Serializable;
 import java.util.List;

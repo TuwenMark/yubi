@@ -1,8 +1,8 @@
-package com.yupi.springbootinit.exception;
+package com.winter.yubi.exception;
 
-import com.yupi.springbootinit.common.BaseResponse;
-import com.yupi.springbootinit.common.ErrorCode;
-import com.yupi.springbootinit.common.ResultUtils;
+import com.winter.yubi.common.BaseResponse;
+import com.winter.yubi.common.ErrorCode;
+import com.winter.yubi.common.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

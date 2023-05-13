@@ -1,6 +1,6 @@
-package com.yupi.springbootinit.exception;
+package com.winter.yubi.exception;
 
-import com.yupi.springbootinit.common.ErrorCode;
+import com.winter.yubi.common.ErrorCode;
 
 /**
  * 自定义异常类

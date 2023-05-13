@@ -1,4 +1,4 @@
-package com.yupi.springbootinit.utils;
+package com.winter.yubi.utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;

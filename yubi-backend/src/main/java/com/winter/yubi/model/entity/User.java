@@ -7,50 +7,42 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 帖子
- *
- * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
- * @from <a href="https://yupi.icu">编程导航知识星球</a>
+ * 用户
+ * @TableName user
  */
-@TableName(value = "post")
+@TableName(value ="user")
 @Data
-public class Post implements Serializable {
-
+public class User implements Serializable {
     /**
      * id
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
-     * 标题
+     * 账号
      */
-    private String title;
+    private String userAccount;
 
     /**
-     * 内容
+     * 密码
      */
-    private String content;
+    private String userPassword;
 
     /**
-     * 标签列表 json
+     * 用户昵称
      */
-    private String tags;
+    private String userName;
 
     /**
-     * 点赞数
+     * 用户头像
      */
-    private Integer thumbNum;
+    private String userAvatar;
 
     /**
-     * 收藏数
+     * 用户角色：user/admin
      */
-    private Integer favourNum;
-
-    /**
-     * 创建用户 id
-     */
-    private Long userId;
+    private String userRole;
 
     /**
      * 创建时间

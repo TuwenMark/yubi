@@ -1,22 +1,23 @@
-package com.yupi.springbootinit.service.impl;
+package com.winter.yubi.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yupi.springbootinit.common.ErrorCode;
-import com.yupi.springbootinit.exception.BusinessException;
-import com.yupi.springbootinit.mapper.PostFavourMapper;
-import com.yupi.springbootinit.model.entity.Post;
-import com.yupi.springbootinit.model.entity.PostFavour;
-import com.yupi.springbootinit.model.entity.User;
-import com.yupi.springbootinit.service.PostFavourService;
-import com.yupi.springbootinit.service.PostService;
-import javax.annotation.Resource;
+import com.winter.yubi.common.ErrorCode;
+import com.winter.yubi.exception.BusinessException;
+import com.winter.yubi.mapper.PostFavourMapper;
+import com.winter.yubi.model.entity.Post;
+import com.winter.yubi.model.entity.PostFavour;
+import com.winter.yubi.model.entity.User;
+import com.winter.yubi.service.PostFavourService;
+import com.winter.yubi.service.PostService;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * 帖子收藏服务实现

@@ -1,8 +1,8 @@
-package com.yupi.springbootinit.service;
+package com.winter.yubi.service;
 
-import com.yupi.springbootinit.model.entity.PostThumb;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yupi.springbootinit.model.entity.User;
+import com.winter.yubi.model.entity.PostThumb;
+import com.winter.yubi.model.entity.User;
 
 /**
  * 帖子点赞服务

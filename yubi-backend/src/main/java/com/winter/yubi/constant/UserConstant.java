@@ -1,4 +1,4 @@
-package com.yupi.springbootinit.constant;
+package com.winter.yubi.constant;
 
 /**
  * 用户常量
