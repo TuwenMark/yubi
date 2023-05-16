@@ -35,12 +35,13 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
 			throw new BusinessException(ErrorCode.PARAMS_ERROR);
 		}
 		String goal = chart.getGoal();
+		String name = chart.getName();
 		String type = chart.getChartType();
 		// TODO charData应该需要判断类型和后缀
 		String chartData = chart.getChartData();
 		// 创建时，参数不能为空
 		if (add) {
-			ThrowUtils.throwIf(StringUtils.isAnyBlank(goal, type, chartData), ErrorCode.PARAMS_ERROR);
+			ThrowUtils.throwIf(StringUtils.isAnyBlank(goal, name, type, chartData), ErrorCode.PARAMS_ERROR);
 		}
 		// 有参数则校验
 		if (StringUtils.isNotBlank(goal) && goal.length() > 80) {
@@ -60,6 +61,7 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
 		}
 		Long id = chartQueryRequest.getId();
 		String goal = chartQueryRequest.getGoal();
+		String name = chartQueryRequest.getName();
 		String chartType = chartQueryRequest.getChartType();
 		Long userId = chartQueryRequest.getUserId();
 		String sortField = chartQueryRequest.getSortField();
@@ -67,6 +69,7 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
 		// 拼接查询条件
 		queryWrapper.eq(id != null && id > 0, "id", id);
 		queryWrapper.like(StringUtils.isNotBlank(goal), "goal", goal);
+		queryWrapper.like(StringUtils.isNotBlank(name), "name", name);
         queryWrapper.eq(StringUtils.isNotBlank(chartType), "chartType", chartType);
 		queryWrapper.eq("isDelete", false);
 		queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),

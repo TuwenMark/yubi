@@ -10,17 +10,17 @@ import com.winter.yubi.common.ResultUtils;
 import com.winter.yubi.constant.UserConstant;
 import com.winter.yubi.exception.BusinessException;
 import com.winter.yubi.exception.ThrowUtils;
-import com.winter.yubi.model.dto.chart.ChartAddRequest;
-import com.winter.yubi.model.dto.chart.ChartEditRequest;
-import com.winter.yubi.model.dto.chart.ChartQueryRequest;
-import com.winter.yubi.model.dto.chart.ChartUpdateRequest;
+import com.winter.yubi.model.dto.chart.*;
 import com.winter.yubi.model.entity.Chart;
 import com.winter.yubi.model.entity.User;
 import com.winter.yubi.service.ChartService;
 import com.winter.yubi.service.UserService;
+import com.winter.yubi.utils.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -209,6 +209,28 @@ public class ChartController {
         }
         boolean result = chartService.updateById(chart);
         return ResultUtils.success(result);
+    }
+
+    @PostMapping("/gen")
+    public BaseResponse<String> genChartByAi(@RequestPart("file") MultipartFile multipartFile, GenChartByAiRequest genChartByAiRequest, HttpServletRequest request){
+        String goal = genChartByAiRequest.getGoal();
+        String name = genChartByAiRequest.getName();
+        String chartType = genChartByAiRequest.getChartType();
+
+        // 校验
+        ThrowUtils.throwIf(StringUtils.isAnyBlank(goal, name, chartType), new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数错误！"));
+        ThrowUtils.throwIf(name.length() > 100, new BusinessException(ErrorCode.PARAMS_ERROR, "表格名称过长！"));
+
+        // 用户文本输入
+        StringBuilder userInput = new StringBuilder();
+        userInput.append("请你扮演一个数据分析师，接下来我会给你我的分析目标和原始数据，请告诉我分析结论。").append("\n");
+        userInput.append("目标：").append(goal).append("\n");
+        // Excel文件转CSV数据
+        String data = ExcelUtil.excelToCsv(multipartFile);
+        userInput.append("数据：").append("\n").append(data);
+        return ResultUtils.success(userInput.toString());
+
+        // return ResultUtils.success(data);
     }
 
 }
