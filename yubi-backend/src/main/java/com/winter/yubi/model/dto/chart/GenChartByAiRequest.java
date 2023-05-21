@@ -24,7 +24,7 @@ public class GenChartByAiRequest implements Serializable {
     private String name;
 
     /**
-     * 图表类型
+     * 图表类型(前端限制选择)
      */
     private String chartType;
 

@@ -38,7 +38,8 @@ spring:
   # todo 需替换配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.15.134:3306/yubi_db?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
+    #url: jdbc:mysql://192.168.15.134:3306/yubi_db?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://192.168.61.134:3306/planet_db?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
     username: root
     password: root
 
@@ -92,3 +93,7 @@ cos:
     secretKey: xxx
     region: xxx
     bucket: xxx
+yuapi:
+  client:
+    access-key: a4tp281eijrcgps6g0sisqsybqxphx4n
+    secret-key: x2jglputf5tkyn2gr6uc6862m8474jfb

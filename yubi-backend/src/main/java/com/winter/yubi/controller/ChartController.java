@@ -10,9 +10,11 @@ import com.winter.yubi.common.ResultUtils;
 import com.winter.yubi.constant.UserConstant;
 import com.winter.yubi.exception.BusinessException;
 import com.winter.yubi.exception.ThrowUtils;
+import com.winter.yubi.manager.AiManager;
 import com.winter.yubi.model.dto.chart.*;
 import com.winter.yubi.model.entity.Chart;
 import com.winter.yubi.model.entity.User;
+import com.winter.yubi.model.vo.GenChartVO;
 import com.winter.yubi.service.ChartService;
 import com.winter.yubi.service.UserService;
 import com.winter.yubi.utils.ExcelUtil;
@@ -41,6 +43,9 @@ public class ChartController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private AiManager aiManager;
 
     private final static Gson GSON = new Gson();
 
@@ -212,7 +217,12 @@ public class ChartController {
     }
 
     @PostMapping("/gen")
-    public BaseResponse<String> genChartByAi(@RequestPart("file") MultipartFile multipartFile, GenChartByAiRequest genChartByAiRequest, HttpServletRequest request){
+    public BaseResponse<GenChartVO> genChartByAi(@RequestPart("file") MultipartFile multipartFile, GenChartByAiRequest genChartByAiRequest, HttpServletRequest request){
+        // 用户登录校验
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null || loginUser.getId() < 0) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "用户未登录！");
+        }
         String goal = genChartByAiRequest.getGoal();
         String name = genChartByAiRequest.getName();
         String chartType = genChartByAiRequest.getChartType();
@@ -223,14 +233,31 @@ public class ChartController {
 
         // 用户文本输入
         StringBuilder userInput = new StringBuilder();
-        userInput.append("请你扮演一个数据分析师，接下来我会给你我的分析目标和原始数据，请告诉我分析结论。").append("\n");
-        userInput.append("目标：").append(goal).append("\n");
+        //userInput.append("请你扮演一个数据分析师，接下来我会给你我的分析目标和原始数据，请告诉我分析结论。").append("\n");
+        userInput.append("目标：").append(goal).append("以" + chartType + "的形式展示").append("\n");
         // Excel文件转CSV数据
         String data = ExcelUtil.excelToCsv(multipartFile);
         userInput.append("数据：").append("\n").append(data);
-        return ResultUtils.success(userInput.toString());
-
-        // return ResultUtils.success(data);
+        // 调用鱼聪明模型
+        String[] aiResponse  = aiManager.doChat(userInput.toString()).split("【【【【【");
+        ThrowUtils.throwIf(aiResponse.length != 3, ErrorCode.SYSTEM_ERROR, "调用AI返回结果格式有误!数据如下：\n" + aiResponse);
+        // 取出结果返回并保存数据库
+        String genChart = aiResponse[1].trim();
+        String genResult = aiResponse[2].trim();
+        Chart chart = new Chart();
+        chart.setGoal(goal);
+        chart.setName(name);
+        chart.setChartData(userInput.toString());
+        chart.setChartType(chartType);
+        chart.setGenChart(genChart);
+        chart.setGenResult(genResult);
+        chart.setUserId(loginUser.getId());
+        boolean saveResult = chartService.save(chart);
+        ThrowUtils.throwIf(!saveResult, ErrorCode.SYSTEM_ERROR, "保存图表数据失败！");
+        GenChartVO genChartVO = new GenChartVO();
+        genChartVO.setGenChart(genChart);
+        genChartVO.setGenResult(genResult);
+        return ResultUtils.success(genChartVO);
     }
 
 }

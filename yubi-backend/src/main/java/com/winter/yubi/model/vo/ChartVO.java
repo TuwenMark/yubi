@@ -42,12 +42,12 @@ public class ChartVO implements Serializable {
     /**
      * 生成的图表数据
      */
-    private String getChart;
+    private String genChart;
 
     /**
      * 生成的分析结论
      */
-    private String getResult;
+    private String genResult;
 
     /**
      * 创建用户id
