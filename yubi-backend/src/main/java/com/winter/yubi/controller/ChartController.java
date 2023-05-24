@@ -234,7 +234,7 @@ public class ChartController {
         // 用户文本输入
         StringBuilder userInput = new StringBuilder();
         //userInput.append("请你扮演一个数据分析师，接下来我会给你我的分析目标和原始数据，请告诉我分析结论。").append("\n");
-        userInput.append("目标：").append(goal).append("以" + chartType + "的形式展示").append("\n");
+        userInput.append("目标：").append(goal).append("，并以" + chartType + "的形式展示").append("\n");
         // Excel文件转CSV数据
         String data = ExcelUtil.excelToCsv(multipartFile);
         userInput.append("数据：").append("\n").append(data);
