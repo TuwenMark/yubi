@@ -132,6 +132,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
  */
 export const request = {
   baseURL: 'http://localhost:8090',
+  // baseURL: 'http://192.168.12.6:8090',
   withCredentials: true,
   ...requestConfig,
 };
