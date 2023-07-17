@@ -34,7 +34,7 @@ public class ChartQueryRequest extends PageRequest implements Serializable {
     /**
      * 图表类型
      */
-    private String chartType;
+    private String[] chartTypes;
 
     /**
      * 创建用户id

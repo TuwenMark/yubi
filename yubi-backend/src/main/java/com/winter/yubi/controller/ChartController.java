@@ -1,5 +1,6 @@
 package com.winter.yubi.controller;
 
+import cn.hutool.core.io.FileUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
 import com.winter.yubi.annotation.AuthCheck;
@@ -28,7 +29,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import static com.winter.yubi.constant.FileConstant.ALLOWED_FILE_TYPES;
+import static com.winter.yubi.constant.FileConstant.XLSX_FILE_SIZE;
 import static com.winter.yubi.constant.RedisConstant.METHOD_Gen_CHART;
+import static com.winter.yubi.constant.UserConstant.RATE_LIMIT_PREFIX;
 
 /**
  * 帖子接口
@@ -229,13 +233,20 @@ public class ChartController {
         if (loginUser == null || loginUser.getId() < 0) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "用户未登录！");
         }
+        // 限流，每个用户Id限制每秒1个请求
+        redissonManager.doRateLimit(RATE_LIMIT_PREFIX + loginUser.getId());
+
         String goal = genChartByAiRequest.getGoal();
         String name = genChartByAiRequest.getName();
         String chartType = genChartByAiRequest.getChartType();
 
-        // 校验
+        // 校验输入参数
         ThrowUtils.throwIf(StringUtils.isAnyBlank(goal, name, chartType), new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数错误！"));
         ThrowUtils.throwIf(name.length() > 100, new BusinessException(ErrorCode.PARAMS_ERROR, "表格名称过长！"));
+
+        // 校验文件后缀和大小
+        ThrowUtils.throwIf(!ALLOWED_FILE_TYPES.contains(FileUtil.getSuffix(multipartFile.getOriginalFilename())), new BusinessException(ErrorCode.PARAMS_ERROR, "不支持的文件类型"));
+        ThrowUtils.throwIf(multipartFile.getSize() > XLSX_FILE_SIZE, new BusinessException(ErrorCode.PARAMS_ERROR, "表格过大"));
 
         // 限流
         redissonManager.doRateLimiter(METHOD_Gen_CHART + loginUser.getId());
@@ -247,16 +258,18 @@ public class ChartController {
         // Excel文件转CSV数据
         String data = ExcelUtil.excelToCsv(multipartFile);
         userInput.append("数据：").append("\n").append(data);
+        System.out.println(userInput.toString());
         // 调用鱼聪明模型
         String[] aiResponse  = aiManager.doChat(userInput.toString()).split("【【【【【");
-        ThrowUtils.throwIf(aiResponse.length != 3, ErrorCode.SYSTEM_ERROR, "调用AI返回结果格式有误!数据如下：\n" + aiResponse);
+        System.out.println(aiResponse);
+        ThrowUtils.throwIf(aiResponse.length != 2, ErrorCode.SYSTEM_ERROR, "调用AI返回结果格式有误!数据如下：\n" + aiResponse);
         // 取出结果返回并保存数据库
-        String genChart = aiResponse[1].trim();
-        String genResult = aiResponse[2].trim();
+        String genChart = aiResponse[0].trim();
+        String genResult = aiResponse[1].trim();
         Chart chart = new Chart();
         chart.setGoal(goal);
         chart.setName(name);
-        chart.setChartData(userInput.toString());
+        chart.setChartData(data);
         chart.setChartType(chartType);
         chart.setGenChart(genChart);
         chart.setGenResult(genResult);

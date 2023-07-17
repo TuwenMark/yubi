@@ -30,5 +30,7 @@ public interface UserConstant {
      */
     String BAN_ROLE = "ban";
 
+    String RATE_LIMIT_PREFIX = "genChartByAi_";
+
     // endregion
 }

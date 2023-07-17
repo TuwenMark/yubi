@@ -4,19 +4,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-
 @SpringBootTest
 class RedissonManagerTest {
+
 	@Resource
 	private RedissonManager redissonManager;
 
-	String userId = "1";
-
 	@Test
-	void testDoRateLimiter() {
+	void doRateLimit() {
 		for (int i = 0; i < 5; i++) {
-			redissonManager.doRateLimiter(userId);
-			System.out.println("请求成功！");
+			redissonManager.doRateLimit("1");
+			System.out.println("成功");
 		}
 	}
 }

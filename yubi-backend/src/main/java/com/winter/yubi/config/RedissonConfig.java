@@ -9,22 +9,25 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Redisson配置类
- *
- * @author Mr.Ye
- * @date 2023/7/16.
- */
+ * @program: yubi-backend
+ * @description: Redission客户端配置
+ * @author: Mr.Ye
+ * @create: 2023-06-11 22:18
+ **/
 @Configuration
-@ConfigurationProperties(prefix = "spring.redisson")
+@ConfigurationProperties(prefix="spring.redisson")
 @Data
 public class RedissonConfig {
-	private Integer database;
+	private int database;
+
 	private String host;
+
 	private String port;
+
 	private String password;
 
 	@Bean
-	public RedissonClient redissonClient() {
+	public RedissonClient RedissonConfig() {
 		Config config = new Config();
 		config.useSingleServer()
 				.setAddress("redis://" + host + ":" + port)

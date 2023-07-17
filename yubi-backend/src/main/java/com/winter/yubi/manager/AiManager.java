@@ -19,7 +19,7 @@ public class AiManager {
 
 	public String doChat(String message) {
 		DevChatRequest chartAiRequest = new DevChatRequest();
-		chartAiRequest.setModelId(1659171950288818178L);
+		chartAiRequest.setModelId(1664835510847168514L);
 		chartAiRequest.setMessage(message);
 		BaseResponse<DevChatResponse> aiResponse = yuCongMingClient.doChat(chartAiRequest);
 		if (aiResponse == null) {

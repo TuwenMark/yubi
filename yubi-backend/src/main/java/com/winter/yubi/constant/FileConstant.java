@@ -1,5 +1,8 @@
 package com.winter.yubi.constant;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 文件常量
  *
@@ -13,4 +16,8 @@ public interface FileConstant {
      * todo 需替换配置
      */
     String COS_HOST = "https://yupi.icu";
+
+    Long XLSX_FILE_SIZE = 1024 * 1024L;
+
+    List<String> ALLOWED_FILE_TYPES = Arrays.asList("xls", "xlsx");
 }
