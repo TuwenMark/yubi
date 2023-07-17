@@ -11,6 +11,7 @@ import com.winter.yubi.constant.UserConstant;
 import com.winter.yubi.exception.BusinessException;
 import com.winter.yubi.exception.ThrowUtils;
 import com.winter.yubi.manager.AiManager;
+import com.winter.yubi.manager.RedissonManager;
 import com.winter.yubi.model.dto.chart.*;
 import com.winter.yubi.model.entity.Chart;
 import com.winter.yubi.model.entity.User;
@@ -26,6 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+import static com.winter.yubi.constant.RedisConstant.METHOD_Gen_CHART;
 
 /**
  * 帖子接口
@@ -46,6 +49,9 @@ public class ChartController {
 
     @Resource
     private AiManager aiManager;
+
+    @Resource
+    private RedissonManager redissonManager;
 
     private final static Gson GSON = new Gson();
 
@@ -230,6 +236,9 @@ public class ChartController {
         // 校验
         ThrowUtils.throwIf(StringUtils.isAnyBlank(goal, name, chartType), new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数错误！"));
         ThrowUtils.throwIf(name.length() > 100, new BusinessException(ErrorCode.PARAMS_ERROR, "表格名称过长！"));
+
+        // 限流
+        redissonManager.doRateLimiter(METHOD_Gen_CHART + loginUser.getId());
 
         // 用户文本输入
         StringBuilder userInput = new StringBuilder();
