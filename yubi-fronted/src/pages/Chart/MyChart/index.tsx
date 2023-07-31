@@ -56,7 +56,8 @@ const MyChart: React.FC = () => {
       <Row gutter={400} className={'margin-30-bottom'}>
         <Col xs={24} sm={24} md={8} lg={8} xl={8} offset={2}>
           <Select
-            placeholder="请选择图表类型"
+            // placeholder="请选择图表类型"
+            defaultValue={'全部'}
             onChange={(value) => {
               setSelectedItem(value);
               // setSearchParams({
