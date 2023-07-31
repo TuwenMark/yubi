@@ -57,7 +57,6 @@ const MyChart: React.FC = () => {
         <Col xs={24} sm={24} md={8} lg={8} xl={8} offset={2}>
           <Select
             placeholder="请选择图表类型"
-            value={selectedItem}
             onChange={(value) => {
               setSelectedItem(value);
               // setSearchParams({
