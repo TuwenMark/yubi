@@ -71,7 +71,7 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
 		queryWrapper.like(StringUtils.isNotBlank(goal), "goal", goal);
 		queryWrapper.like(StringUtils.isNotBlank(name), "name", name);
         queryWrapper.eq(StringUtils.isNotBlank(chartType), "chartType", chartType);
-		queryWrapper.eq("isDelete", false);
+		// queryWrapper.eq("isDelete", false);
 		queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
 				sortField);
 		return queryWrapper;

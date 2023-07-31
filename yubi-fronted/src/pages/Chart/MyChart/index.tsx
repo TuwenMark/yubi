@@ -9,7 +9,7 @@ const MyChart: React.FC = () => {
   const { initialState } = useModel('@@initialState');
   const { currentUser } = initialState ?? {};
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedItem, setSelectedItem] = useState<string>('');
   const initialParams = {
     pageSize: 5,
     current: 1,
@@ -49,18 +49,17 @@ const MyChart: React.FC = () => {
     loadData();
   }, [searchParams]);
 
-  const OPTIONS = ['折线图', '柱状图', '饼图', '雷达图', '堆叠图'];
+  const OPTIONS = ['全部', '折线图', '柱状图', '饼图', '雷达图', '堆叠图'];
 
   return (
     <div>
       <Row gutter={400} className={'margin-30-bottom'}>
         <Col xs={24} sm={24} md={8} lg={8} xl={8} offset={2}>
           <Select
-            mode="multiple"
             placeholder="请选择图表类型"
-            value={selectedItems}
+            value={selectedItem}
             onChange={(value) => {
-              setSelectedItems(value);
+              setSelectedItem(value);
               // setSearchParams({
               //   ...initialParams,
               //   chartTypes: selectedItems,
@@ -68,7 +67,7 @@ const MyChart: React.FC = () => {
               // alert(selectedItems);
             }}
             style={{ width: '100%' }}
-            options={OPTIONS.filter((o) => !selectedItems.includes(o)).map((item) => ({
+            options={OPTIONS.filter((o) => !selectedItem.includes(o)).map((item) => ({
               value: item,
               label: item,
             }))}
@@ -83,7 +82,7 @@ const MyChart: React.FC = () => {
               setSearchParams({
                 ...initialParams,
                 name: value,
-                chartTypes: selectedItems,
+                chartType: selectedItem.includes('全部') ? '' : selectedItem,
               });
             }}
           />
