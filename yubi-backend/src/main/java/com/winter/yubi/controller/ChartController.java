@@ -28,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.winter.yubi.constant.FileConstant.ALLOWED_FILE_TYPES;
 import static com.winter.yubi.constant.FileConstant.XLSX_FILE_SIZE;
@@ -56,6 +58,9 @@ public class ChartController {
 
     @Resource
     private RedissonManager redissonManager;
+
+    @Resource
+    private ThreadPoolExecutor threadPoolExecutor;
 
     private final static Gson GSON = new Gson();
 
@@ -249,7 +254,7 @@ public class ChartController {
         ThrowUtils.throwIf(multipartFile.getSize() > XLSX_FILE_SIZE, new BusinessException(ErrorCode.PARAMS_ERROR, "表格过大"));
 
         // 限流
-        redissonManager.doRateLimiter(METHOD_Gen_CHART + loginUser.getId());
+        redissonManager.doRateLimit(METHOD_Gen_CHART + loginUser.getId());
 
         // 用户文本输入
         StringBuilder userInput = new StringBuilder();
@@ -280,6 +285,100 @@ public class ChartController {
         genChartVO.setGenChart(genChart);
         genChartVO.setGenResult(genResult);
         return ResultUtils.success(genChartVO);
+    }
+
+    @PostMapping("/gen/async")
+    public BaseResponse<GenChartVO> genChartByAiAsync(@RequestPart("file") MultipartFile multipartFile, GenChartByAiRequest genChartByAiRequest, HttpServletRequest request){
+        // 用户登录校验
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null || loginUser.getId() < 0) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "用户未登录！");
+        }
+        // 限流，每个用户Id限制每秒1个请求
+        redissonManager.doRateLimit(RATE_LIMIT_PREFIX + loginUser.getId());
+
+        String goal = genChartByAiRequest.getGoal();
+        String name = genChartByAiRequest.getName();
+        String chartType = genChartByAiRequest.getChartType();
+
+        // 校验输入参数
+        ThrowUtils.throwIf(StringUtils.isAnyBlank(goal, name, chartType), new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数错误！"));
+        ThrowUtils.throwIf(name.length() > 100, new BusinessException(ErrorCode.PARAMS_ERROR, "表格名称过长！"));
+
+        // 校验文件后缀和大小
+        ThrowUtils.throwIf(!ALLOWED_FILE_TYPES.contains(FileUtil.getSuffix(multipartFile.getOriginalFilename())), new BusinessException(ErrorCode.PARAMS_ERROR, "不支持的文件类型"));
+        ThrowUtils.throwIf(multipartFile.getSize() > XLSX_FILE_SIZE, new BusinessException(ErrorCode.PARAMS_ERROR, "表格过大"));
+
+        // 限流
+        redissonManager.doRateLimit(METHOD_Gen_CHART + loginUser.getId());
+
+        // 用户文本输入
+        StringBuilder userInput = new StringBuilder();
+        //userInput.append("请你扮演一个数据分析师，接下来我会给你我的分析目标和原始数据，请告诉我分析结论。").append("\n");
+        userInput.append("目标：").append(goal).append("，并以" + chartType + "的形式展示").append("\n");
+        // Excel文件转CSV数据
+        String data = ExcelUtil.excelToCsv(multipartFile);
+        userInput.append("数据：").append("\n").append(data);
+        System.out.println(userInput.toString());
+        // 保存图表数据到数据库
+        Chart chart = new Chart();
+        chart.setGoal(goal);
+        chart.setName(name);
+        chart.setChartData(data);
+        chart.setChartType(chartType);
+        chart.setStatus(0);
+        chart.setUserId(loginUser.getId());
+        boolean saveResult = chartService.save(chart);
+        ThrowUtils.throwIf(!saveResult, ErrorCode.SYSTEM_ERROR, "保存图表基本数据失败！");
+        Long chartId = chart.getId();
+        // 异步调用鱼聪明模型
+        CompletableFuture.runAsync(() -> {
+            // 将图表状态改为running
+            Chart updateChart = new Chart();
+            updateChart.setId(chartId);
+            updateChart.setStatus(1);
+            boolean result = chartService.updateById(updateChart);
+            if (!result) {
+                handleError(chartId, "更改图表生成状态失败！");
+            }
+            // 调用AI模型
+            String[] aiResponse  = aiManager.doChat(userInput.toString()).split("【【【【【");
+            if (aiResponse.length != 2) {
+                handleError(chartId, "调用AI返回结果格式有误!");
+                return;
+            }
+            // 取出结果返回并保存数据库
+            String genChart = aiResponse[0].trim();
+            String genResult = aiResponse[1].trim();
+            updateChart.setGenChart(genChart);
+            updateChart.setGenResult(genResult);
+            updateChart.setStatus(2);
+            result = chartService.updateById(updateChart);
+            if (!result) {
+                handleError(chartId, "保存AI生成的图表信息失败！");
+            }
+        }, threadPoolExecutor);
+        // 返回生成结果
+        GenChartVO genChartVO = new GenChartVO();
+        genChartVO.setChartId(chartId);
+        return ResultUtils.success(genChartVO);
+    }
+
+    /**
+     * 处理AI生成图表过程的错误
+     *
+     * @param chartId 图表ID
+     * @param execMessage AI执行信息
+     */
+    private void handleError(Long chartId, String execMessage) {
+        Chart updateChart = new Chart();
+        updateChart.setId(chartId);
+        updateChart.setStatus(-1);
+        updateChart.setExecMessage(execMessage);
+        boolean result = chartService.updateById(updateChart);
+        if (!result) {
+            log.error("更新图表失败状态失败！");
+        }
     }
 
 }

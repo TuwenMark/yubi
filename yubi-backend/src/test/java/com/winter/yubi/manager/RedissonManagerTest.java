@@ -11,7 +11,7 @@ class RedissonManagerTest {
 	private RedissonManager redissonManager;
 
 	@Test
-	void doRateLimit() {
+	void testDoRateLimit() {
 		for (int i = 0; i < 5; i++) {
 			redissonManager.doRateLimit("1");
 			System.out.println("成功");

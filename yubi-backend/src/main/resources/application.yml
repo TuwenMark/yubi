@@ -30,12 +30,6 @@ spring:
     database: 2
     host: localhost
     port: 6379
-    timeout: 5000
-    password: 123456
-  redisson:
-    database: 2
-    host: localhost
-    port: 6379
     password: 123456
 
   # session 配置
@@ -49,8 +43,8 @@ spring:
   # todo 需替换配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    #url: jdbc:mysql://192.168.15.134:3306/yubi_db?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
-    url: jdbc:mysql://192.168.61.134:3306/planet_db?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://192.168.15.134:3306/yubi_db?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
+    #url: jdbc:mysql://192.168.61.134:3306/planet_db?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
     username: root
     password: root
 

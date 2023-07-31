@@ -5,7 +5,13 @@ export default [
     routes: [{ name: 'login', path: '/user/login', component: './User/Login' }],
   },
   { path: '/welcome', name: 'welcome', icon: 'smile', component: './Welcome' },
-  { icon: 'BarChart', path: '/add_chart', name: '智能分析', component: './Chart/AddChart' },
+  { icon: 'BarChart', path: '/add_chart', name: '智能分析(同步)', component: './Chart/AddChart' },
+  {
+    icon: 'BarChart',
+    path: '/add_chart_async',
+    name: '智能分析(异步)',
+    component: './Chart/AddChartAsync',
+  },
   { icon: 'PieChart', path: '/my_chart', name: '我的图表', component: './Chart/MyChart' },
   {
     path: '/admin',

@@ -13,6 +13,8 @@ const MyChart: React.FC = () => {
   const initialParams = {
     pageSize: 5,
     current: 1,
+    sortField: 'createTime',
+    sortOrder: 'desc',
   };
   const [searchParams, setSearchParams] = useState<API.ChartQueryRequest>({
     ...initialParams,
@@ -26,9 +28,11 @@ const MyChart: React.FC = () => {
       const res = await listMyChartByPageUsingPOST(searchParams);
       if (res?.data?.records) {
         res?.data?.records.forEach((data) => {
-          const chartOption = JSON.parse(data.genChart ?? '');
-          chartOption.title = undefined;
-          data.genChart = JSON.stringify(chartOption);
+          if (data.status === 2) {
+            const chartOption = JSON.parse(data.genChart ?? '');
+            chartOption.title = undefined;
+            data.genChart = JSON.stringify(chartOption);
+          }
         });
         setChartList(res.data.records);
         setTotal(res.data.total ?? 0);
@@ -113,19 +117,26 @@ const MyChart: React.FC = () => {
             <Col span={22}>
               <Card className={'margin-30-bottom'}>
                 <List.Item key={item.id}>
-                  <List.Item.Meta
-                    avatar={<Avatar src={currentUser?.userAvatar} />}
-                    title={<div>{item.name}</div>}
-                    description={
+                  {item.status === 0 && <h2>Waiting...</h2>}
+                  {item.status === 1 && <h2>Running...</h2>}
+                  {item.status === -1 && <h2>Failed...</h2>}
+                  {item.status === 2 && (
+                    <>
+                      <List.Item.Meta
+                        avatar={<Avatar src={currentUser?.userAvatar} />}
+                        title={<div>{item.name}</div>}
+                        description={
+                          <div>
+                            <div className="margin-15">图表类型：{item.chartType}</div>
+                            <div>分析结论：{item.genResult}</div>
+                          </div>
+                        }
+                      />
                       <div>
-                        <div className="margin-15">图表类型：{item.chartType}</div>
-                        <div>分析结论：{item.genResult}</div>
+                        <ReactECharts option={JSON.parse(item.genChart ?? '')} />
                       </div>
-                    }
-                  />
-                  <div>
-                    <ReactECharts option={JSON.parse(item.genChart ?? '')} />
-                  </div>
+                    </>
+                  )}
                 </List.Item>
               </Card>
             </Col>

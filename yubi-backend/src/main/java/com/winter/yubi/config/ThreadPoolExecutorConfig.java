@@ -21,8 +21,8 @@ public class ThreadPoolExecutorConfig {
 	ThreadFactory threadFactory = new ThreadFactory() {
 		@Override
 		public Thread newThread(@NotNull Runnable r) {
-			System.out.println("线程正在执行任务，" + "执行者：线程" + threadNumber);
 			Thread thread = new Thread(r);
+			thread.setName("线程" + threadNumber);
 			threadNumber++;
 			return thread;
 		}
