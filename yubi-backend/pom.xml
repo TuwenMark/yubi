@@ -25,6 +25,8 @@
         <hutool.version>5.8.8</hutool.version>
         <yucongming.version>0.0.2</yucongming.version>
         <redisson.version>3.17.6</redisson.version>
+        <rabbitmq.version>5.18.0</rabbitmq.version>
+        <amqp.version>2.7.5</amqp.version>
     </properties>
     <dependencies>
         <dependency>
@@ -65,11 +67,17 @@
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-data-redis</artifactId>
         </dependency>
-        <!--Redisson-->
+        <!-- RabbitMQ -->
         <dependency>
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson</artifactId>
-            <version>${redisson.version}</version>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+            <version>${rabbitmq.version}</version>
+        </dependency>
+        <!-- RabbitMQ starter -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+            <version>2.7.5</version>
         </dependency>
         <!-- elasticsearch-->
         <dependency>
