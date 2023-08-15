@@ -1,5 +1,6 @@
-package mq;
+package com.winter.yubi.mq;
 
+import com.winter.yubi.constant.MqConstant;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ public class MessageClient {
 	@Resource
 	private RabbitTemplate rabbitTemplate;
 
-	public void sendMessage(String exchange, String routingKey, String message) {
-		rabbitTemplate.convertAndSend(exchange, routingKey, message);
+	public void sendMessage(Long chartId) {
+		rabbitTemplate.convertAndSend(MqConstant.EXCHANGE_NAME, MqConstant.ROUTING_KEY, chartId);
 	}
 }

@@ -1,4 +1,4 @@
-package mq.demo;
+package com.winter.yubi.mq.demo;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -7,20 +7,20 @@ import com.rabbitmq.client.ConnectionFactory;
 import java.util.Scanner;
 
 /**
- * @description: Topic模式——路由键可以使用通配符进行模糊匹配
+ * @description: 路由模式生产者——发送消息和绑定交换机多了路由键，发送给指定队列，direct类型交换机
  * @author: Mr.Ye
- * @since: 2023/8/6 10:51
+ * @since: 2023/8/6 9:59
  */
-public class TopicProducer {
-	private static final String EXCHANGE_NAME = "topic_exchange";
+public class RoutingProducer {
+	private static final String EXCHANGE_NAME = "direct_logs";
 
 	public static void main(String[] args) throws Exception {
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.setHost("localhost");
-		try (Connection connection = factory.newConnection();
-			 Channel channel = connection.createChannel()) {
-			channel.exchangeDeclare(EXCHANGE_NAME, "topic");
-
+		try {
+			Connection connection = factory.newConnection();
+			Channel channel = connection.createChannel();
+			channel.exchangeDeclare(EXCHANGE_NAME, "direct");
 			Scanner scanner = new Scanner(System.in);
 			while (scanner.hasNext()) {
 				String[] messages = scanner.nextLine().split(" ");
@@ -32,6 +32,8 @@ public class TopicProducer {
 				channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"));
 				System.out.println(" [x] Sent '" + routingKey + "':'" + message + "'");
 			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 }

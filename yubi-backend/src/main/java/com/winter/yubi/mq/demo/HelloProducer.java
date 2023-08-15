@@ -1,16 +1,17 @@
-package mq.demo;
+package com.winter.yubi.mq.demo;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DeliverCallback;
+
+import java.util.Scanner;
 
 /**
- * @description: HelloWorld入门案例
+ * @description: 第一种：单消费者模式——一个生产者对一个队列一个消费者
  * @author: Mr.Ye
- * @since: 2023/8/3 20:02}
+ * @since: 2023/8/2 23:36}
  */
-public class HelloReceiver {
+public class HelloProducer {
 	private final static String QUEUE_NAME = "hello";
 
 	public static void main(String[] args) {
@@ -20,13 +21,12 @@ public class HelloReceiver {
 			Connection connection = factory.newConnection();
 			Channel channel = connection.createChannel();
 			channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-			System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
-			DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-				String message = new String(delivery.getBody(), "UTF-8");
-				System.out.println(" [x] Received '" + message + "'");
-			};
-			channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -> {
-			});
+			Scanner scanner = new Scanner(System.in);
+			while (scanner.hasNext()) {
+				String message = scanner.nextLine();
+				channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
+				System.out.println(" [x] Sent '" + message + "'");
+			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

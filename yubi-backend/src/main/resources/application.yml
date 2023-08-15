@@ -33,7 +33,7 @@ spring:
     password: 123456
   # mq配置
   rabbitmq:
-    host: localhost
+    host: 192.168.15.134
     port: 5672
     username: guest
     password: guest

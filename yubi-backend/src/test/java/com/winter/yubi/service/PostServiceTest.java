@@ -3,11 +3,11 @@ package com.winter.yubi.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.winter.yubi.model.dto.post.PostQueryRequest;
 import com.winter.yubi.model.entity.Post;
-
-import javax.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.annotation.Resource;
 
 /**
  * 帖子服务测试

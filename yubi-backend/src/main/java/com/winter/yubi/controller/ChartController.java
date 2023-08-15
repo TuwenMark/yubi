@@ -2,7 +2,6 @@ package com.winter.yubi.controller;
 
 import cn.hutool.core.io.FileUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.google.gson.Gson;
 import com.winter.yubi.annotation.AuthCheck;
 import com.winter.yubi.common.BaseResponse;
 import com.winter.yubi.common.DeleteRequest;
@@ -17,6 +16,7 @@ import com.winter.yubi.model.dto.chart.*;
 import com.winter.yubi.model.entity.Chart;
 import com.winter.yubi.model.entity.User;
 import com.winter.yubi.model.vo.GenChartVO;
+import com.winter.yubi.mq.MessageClient;
 import com.winter.yubi.service.ChartService;
 import com.winter.yubi.service.UserService;
 import com.winter.yubi.utils.ExcelUtil;
@@ -62,7 +62,8 @@ public class ChartController {
     @Resource
     private ThreadPoolExecutor threadPoolExecutor;
 
-    private final static Gson GSON = new Gson();
+    @Resource
+    private MessageClient messageClient;
 
     // region 增删改查
 
@@ -340,6 +341,7 @@ public class ChartController {
             boolean result = chartService.updateById(updateChart);
             if (!result) {
                 handleError(chartId, "更改图表生成状态失败！");
+                return;
             }
             // 调用AI模型
             String[] aiResponse  = aiManager.doChat(userInput.toString()).split("【【【【【");
@@ -358,6 +360,50 @@ public class ChartController {
                 handleError(chartId, "保存AI生成的图表信息失败！");
             }
         }, threadPoolExecutor);
+        // 返回生成结果
+        GenChartVO genChartVO = new GenChartVO();
+        genChartVO.setChartId(chartId);
+        return ResultUtils.success(genChartVO);
+    }
+
+    @PostMapping("/gen/async/mq")
+    public BaseResponse<GenChartVO> genChartByAiAsyncMq(@RequestPart("file") MultipartFile multipartFile, GenChartByAiRequest genChartByAiRequest, HttpServletRequest request){
+        // 用户登录校验
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null || loginUser.getId() < 0) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "用户未登录！");
+        }
+        // 限流，每个用户Id限制每秒1个请求
+        redissonManager.doRateLimit(RATE_LIMIT_PREFIX + loginUser.getId());
+
+        String goal = genChartByAiRequest.getGoal();
+        String name = genChartByAiRequest.getName();
+        String chartType = genChartByAiRequest.getChartType();
+
+        // 校验输入参数
+        ThrowUtils.throwIf(StringUtils.isAnyBlank(goal, name, chartType), new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数错误！"));
+        ThrowUtils.throwIf(name.length() > 100, new BusinessException(ErrorCode.PARAMS_ERROR, "表格名称过长！"));
+
+        // 校验文件后缀和大小
+        ThrowUtils.throwIf(!ALLOWED_FILE_TYPES.contains(FileUtil.getSuffix(multipartFile.getOriginalFilename())), new BusinessException(ErrorCode.PARAMS_ERROR, "不支持的文件类型"));
+        ThrowUtils.throwIf(multipartFile.getSize() > XLSX_FILE_SIZE, new BusinessException(ErrorCode.PARAMS_ERROR, "表格过大"));
+
+        // 限流
+        redissonManager.doRateLimit(METHOD_Gen_CHART + loginUser.getId());
+        String data = ExcelUtil.excelToCsv(multipartFile);
+        // 保存图表数据到数据库
+        Chart chart = new Chart();
+        chart.setGoal(goal);
+        chart.setName(name);
+        chart.setChartData(data);
+        chart.setChartType(chartType);
+        chart.setStatus(0);
+        chart.setUserId(loginUser.getId());
+        boolean saveResult = chartService.save(chart);
+        ThrowUtils.throwIf(!saveResult, ErrorCode.SYSTEM_ERROR, "保存图表基本数据失败！");
+        Long chartId = chart.getId();
+        // 发送消息到消息队列
+        messageClient.sendMessage(chartId);
         // 返回生成结果
         GenChartVO genChartVO = new GenChartVO();
         genChartVO.setChartId(chartId);

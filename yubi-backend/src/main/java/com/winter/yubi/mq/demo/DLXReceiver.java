@@ -1,4 +1,4 @@
-package mq.demo;
+package com.winter.yubi.mq.demo;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
