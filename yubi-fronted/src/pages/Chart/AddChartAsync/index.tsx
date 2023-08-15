@@ -1,4 +1,4 @@
-import { genChartByAiAsyncUsingPOST } from '@/services/yubi/chartController';
+import { genChartByAiAsyncMqUsingPOST } from '@/services/yubi/chartController';
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, message, Row, Select, Space, Upload } from 'antd';
 import { useForm } from 'antd/es/form/Form';
@@ -18,7 +18,8 @@ const AddChart: React.FC = () => {
       file: undefined,
     };
     try {
-      const res = await genChartByAiAsyncUsingPOST(params, {}, values.file.file.originFileObj);
+      // const res = await genChartByAiAsyncUsingPOST(params, {}, values.file.file.originFileObj);
+      const res = await genChartByAiAsyncMqUsingPOST(params, {}, values.file.file.originFileObj);
       if (!res.data) {
         message.error('智能分析失败，请稍后重试！');
       } else {
